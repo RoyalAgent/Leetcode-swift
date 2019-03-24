@@ -41,4 +41,61 @@ class ListNode{
         self.next = nil
     }
 }
+func reverseKGroup(_ head: ListNode?, _ k: Int) -> ListNode? {
+    let dummy = ListNode(0)
+    dummy.next = head
+    
+    var prev = dummy                             // prev = A
+    while prev.next != nil {                     // A->B->C->D->E => A->D->C->B->E
+        var groupTail : ListNode? = prev
+        for _ in 1...k {
+            groupTail = groupTail?.next
+        }
+        guard let _ = groupTail else {            // groupTail = D
+            break
+        }
+        
+        let nextGroupHead = groupTail!.next      // nextGroupHead = E
+        var last = nextGroupHead                 // last = E
+        var current : ListNode? = prev.next      // current = B
+        while current != nil && current !== nextGroupHead {
+            let next = current!.next             // next = C
+            current!.next = last                 // B -> E
+            last = current                       // last = B
+            current = next                       // current = C
+        }
+        
+        groupTail = prev.next
+        prev.next = last
+        prev = groupTail!
+    }
+    
+    return dummy.next
+}
 
+func display(_ list:ListNode?) -> [Int]?{
+    guard list != nil else {
+        return nil
+    }
+    var node:ListNode? = list
+    var result:[Int] = []
+    
+    while node != nil {
+        result.append(node!.val)
+        node = node!.next
+    }
+    return result
+}
+
+//构造list
+let list = ListNode(1)
+let node2 = ListNode(2)
+let node3 = ListNode(3)
+let node4 = ListNode(4)
+let node5 = ListNode(5)
+list.next = node2
+node2.next = node3
+node3.next = node4
+node4.next = node5
+
+display(reverseKGroup(list, 2))
